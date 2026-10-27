@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<style>html{color-scheme:light}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Orari Congiunti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: un foglio di calendario disegnato a mano: testata, mese a griglia con tre fasce (mattina, pomeriggio, sera) per giorno, accanto le occasioni e il dettaglio del giorno scelto */
+:root{
+  --paper:#FBF6EA;
+  --card:#FFFDF7;
+  --ink:#2C3A4A;
+  --ink-soft:#5F6B77;
+  --sky:#4F8FCB;
+  --sky-soft:#DDEBF7;
+  --sun:#F2A33A;
+  --sun-soft:#FCE6C2;
+  --on-sun:#2B2418;
+  --line:#E4D9C2;
+  --off:#ECE4D2;
+  --heart:#E0806A;
+  --anna:#E2789A;
+  --flavio:#4BA6DF;
+  --demetrio:#4F9C60;
+  --andrea:#9A7BC6;
+  --f-hand:"Caveat","Segoe Print","Bradley Hand",cursive;
+  --f-body:"Nunito","Segoe UI",system-ui,-apple-system,sans-serif;
+  --sketch:14px 10px 16px 9px / 9px 15px 10px 14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#1B2530; --card:#232F3C; --ink:#F2EADB; --ink-soft:#AFB9C3;
+    --sky:#82B6E6; --sky-soft:#2A3C50; --sun:#F4AE4E; --sun-soft:#4B3B22; --on-sun:#2B2418;
+    --line:#364556; --off:#2C3846; --heart:#EE9A82; --anna:#F29AB4; --flavio:#8ACBF2; --demetrio:#7CC08A; --andrea:#B59BE0; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1B2530; --card:#232F3C; --ink:#F2EADB; --ink-soft:#AFB9C3;
+  --sky:#82B6E6; --sky-soft:#2A3C50; --sun:#F4AE4E; --sun-soft:#4B3B22; --on-sun:#2B2418;
+  --line:#364556; --off:#2C3846; --heart:#EE9A82; --anna:#F29AB4; --flavio:#8ACBF2; --demetrio:#7CC08A; --andrea:#B59BE0; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1120px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));display:flex;flex-direction:column;gap:28px}
+
+header{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-weight:800;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--sky)}
+h1{font-family:var(--f-hand);font-weight:700;font-size:clamp(44px,8vw,64px);line-height:1;margin:0;text-wrap:balance}
+h1 .month{color:var(--sun)}
+.squiggle{display:block;width:min(260px,60%);height:14px;color:var(--sky)}
+.lede{margin:4px 0 0;max-width:62ch;color:var(--ink-soft)}
+.people{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.who{display:inline-flex;align-items:baseline;gap:6px;padding:4px 12px;border:1.5px solid var(--line);border-radius:var(--sketch);background:var(--card);font-weight:700}
+.who small{font-weight:600;color:var(--ink-soft);font-size:12px}
+.who.pending{border-style:dashed;color:var(--ink-soft)}
+
+.main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:minmax(0,1fr)}}
+
+.cal{display:flex;flex-direction:column;gap:10px}
+.dow,.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.dow span{font-weight:800;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);text-align:center}
+.dow span.we{color:var(--sky)}
+.cell{appearance:none;font:inherit;color:inherit;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:var(--sketch);padding:6px 7px 8px;min-height:84px;display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:transform .12s ease, border-color .12s ease}
+.cell:hover{transform:translateY(-1px);border-color:var(--sky)}
+.cell:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.cell.blank{visibility:hidden;cursor:default}
+.cell .num{font-family:var(--f-hand);font-weight:700;font-size:26px;line-height:1}
+.cell .tag{font-size:11px;font-weight:700;color:var(--ink-soft);line-height:1.2}
+.cell .slots{display:flex;gap:3px;margin-top:auto}
+.slot{flex:1;min-width:0;height:13px;border-radius:7px;background:var(--off);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:400;line-height:1;color:var(--ink)}
+.slot.si{background:var(--sun)}
+.slot.forse{background:transparent;border:1.5px dashed var(--sun)}
+.cell.away{background:var(--sky-soft);border-color:transparent}
+.cell.away .slots{display:none}
+.cell.away .heart{width:16px;height:16px;color:var(--heart);margin-top:auto}
+.cell.tutto,.cell.parte{border-color:var(--sun)}
+.cell.tutto{background:var(--sun-soft)}
+.cell.no .num{color:var(--ink-soft)}
+.cell[aria-pressed="true"]{border-color:var(--sky);box-shadow:0 0 0 2px var(--sky)}
+@media (max-width:480px){
+  .cell{min-height:62px;padding:5px 5px 6px}
+  .cell .num{font-size:21px}
+  .cell .tag{display:none}
+  .slot{height:11px;font-size:8.5px}
+}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--ink-soft)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:22px;height:10px;border-radius:6px;background:var(--off)}
+.legend i.si{background:var(--sun)}
+.legend i.forse{background:transparent;border:1.5px dashed var(--sun)}
+.legend i.away{background:var(--sky-soft)}
+.howto{margin:0;font-size:13px;color:var(--ink-soft);max-width:70ch}
+.howto b{color:var(--ink)}
+
+aside{display:flex;flex-direction:column;gap:22px;min-width:0}
+h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;margin:0}
+.occ{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.occ button{appearance:none;font:inherit;color:inherit;width:100%;text-align:left;display:grid;grid-template-columns:64px minmax(0,1fr);gap:10px;align-items:baseline;padding:8px 10px;background:transparent;border:0;border-bottom:1.5px dashed var(--line);cursor:pointer}
+.occ button:hover .d,.occ button:focus-visible .d{color:var(--sky)}
+.occ button:focus-visible{outline:3px solid var(--sky);outline-offset:2px;border-radius:8px}
+.occ .d{font-family:var(--f-hand);font-weight:700;font-size:24px;line-height:1}
+.occ .w{font-weight:700}
+.occ .w b{background:var(--sun);color:var(--on-sun);padding:0 6px;border-radius:6px;font-weight:800}
+.occ .maybe{display:block;font-size:13px;font-weight:600;color:var(--ink-soft)}
+
+.detail{background:var(--card);border:1.5px solid var(--line);border-radius:var(--sketch);padding:16px 16px 12px;display:flex;flex-direction:column;gap:10px}
+.detail h2{font-size:30px}
+.prow{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;padding-block:8px;border-top:1.5px dashed var(--line)}
+.prow .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.prow .name{font-weight:800}
+.prow .name small{font-weight:600;color:var(--ink-soft);font-size:12px;margin-left:4px}
+.prow .what{font-size:13px;color:var(--ink-soft);font-weight:600}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--off);color:var(--ink-soft)}
+.chip.free{background:var(--sky-soft);color:var(--ink)}
+.chip.unknown{background:transparent;border:1.5px dashed var(--ink-soft)}
+.chip.si{background:var(--sun);color:var(--on-sun)}
+.chip.forse{background:transparent;border:1.5px dashed var(--sun);color:var(--ink)}
+.prow.together .name{font-family:var(--f-hand);font-size:24px;font-weight:700}
+.prow.pending .what{font-style:italic}
+
+.notes{border-top:2px dashed var(--line);padding-top:18px;display:flex;flex-direction:column;gap:10px}
+.notes ul{margin:0;padding-left:18px;max-width:75ch;color:var(--ink-soft);display:flex;flex-direction:column;gap:4px}
+.notes li b{color:var(--ink)}
+@media (prefers-reduced-motion: reduce){.cell{transition:none}.cell:hover{transform:none}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Turni di famiglia</span>
+    <h1>Quando siamo liberi · <span class="month">novembre</span></h1>
+    <svg class="squiggle" viewBox="0 0 260 14" fill="none" aria-hidden="true"><path d="M2 8 C 22 2, 38 13, 58 7 S 96 2, 118 8 S 158 13, 180 7 S 222 2, 258 8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+    <p class="lede" id="lede"></p>
+    <div class="people" id="people"></div>
+  </header>
+
+  <div class="main">
+    <section class="cal" aria-label="Calendario di novembre 2026">
+      <div class="dow" aria-hidden="true"><span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span class="we">Sab</span><span class="we">Dom</span></div>
+      <div class="grid" id="grid"></div>
+      <div class="legend">
+        <span><i class="si"></i>liberi tutti</span>
+        <span><i class="forse"></i>da verificare</span>
+        <span><i></i>qualcuno lavora</span>
+        <span><i class="away"></i>non disponibili</span>
+      </div>
+      <p class="howto">Le tre barrette sono mattina, pomeriggio e sera. Dentro trovi una piccola a se lavora Anna, f se lavora Flavio, af se lavorano tutti e due.</p>
+    </section>
+
+    <aside>
+      <section class="detail" id="detail" aria-live="polite"></section>
+    </aside>
+  </div>
+
+  <section class="notes">
+    <h2>Come ho letto i turni</h2>
+    <ul>
+      <li><b>Fasce:</b> mattina 8–14, pomeriggio 14–20, sera dopo le 20.</li>
+      <li><b>Notte e smonto:</b> la notte va dalle 20 alle 8, quindi chi la fa è libero di giorno ma non la sera; il giorno dopo (smonto) è libero dalle 8.</li>
+      <li><b>Anna:</b> M mattina 8–14, P pomeriggio 14–20, MP mattina e pomeriggio 8–20, Nido stesso orario della mattina, PS permesso studio (congresso o corso, di solito 9–17), N notte 20–8. Le caselle vuote sono riposo.</li>
+      <li><b>Flavio:</b> per lo smonto vale la stessa regola di Anna. A novembre (dal 9 al 29) non ha prenotte (20–24) né reperibilità. Lunedì 30 non c'è nello screenshot.</li>
+      <li><b>Demetrio:</b> è impegnato il pomeriggio il lunedì, il mercoledì e il venerdì, e la mattina il martedì e il giovedì. Il venerdì ha anche un impegno in tarda mattinata. Per ora questi impegni nel calendario non contano: li vedi toccando il giorno.</li>
+      <li><b>Andrea:</b> il suo orario arriva più avanti; per ora il calendario non lo considera.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+(function(){
+  var F='free', B='busy', U='unknown', A='away', T='aft';
+  var KEYS=['m','p','s'];
+  var SLOT_NAME={m:'mattina',p:'pomeriggio',s:'sera'};
+  var DOW_LONG=['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
+  var DOW_SHORT=['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+  var YEAR=2026, MONTH=10, NDAYS=30, HONEY_END=17;
+
+  function S(m,p,s){return {m:m,p:p,s:s};}
+  function dow(d){return new Date(YEAR,MONTH,d).getDay();}
+
+  var annaDays={
+    18:['Riposo',S(F,F,F)],
+    19:['Nido (8–14) e pomeriggio (14–20)',S(B,B,F)],
+    20:['Notte (20–8)',S(F,F,B)],
+    21:['Smonto: libera dalle 8',S(F,F,F)],
+    22:['Mattina e pomeriggio (8–20)',S(B,B,F)],
+    23:['Riposo',S(F,F,F)],
+    24:['Notte (20–8)',S(F,F,B)],
+    25:['Smonto: libera dalle 8',S(F,F,F)],
+    26:['Mattina e pomeriggio (8–20)',S(B,B,F)],
+    27:['Riposo',S(F,F,F)],
+    28:['Notte (20–8)',S(F,F,B)],
+    29:['Smonto: libera dalle 8',S(F,F,F)],
+    30:['Permesso studio (9–17)',S(B,B,F)]
+  };
+  var flavioDays={
+    18:['Libero',S(F,F,F)],
+    19:['Libero',S(F,F,F)],
+    20:['Pomeriggio',S(F,B,F)],
+    21:['Libero',S(F,F,F)],
+    22:['Libero',S(F,F,F)],
+    23:['Mattina e pomeriggio',S(B,B,F)],
+    24:['Notte',S(F,F,B)],
+    25:['Smonto: libero dalle 8',S(F,F,F)],
+    26:['Mattina e pomeriggio',S(B,B,F)],
+    27:['Mattina',S(B,F,F)],
+    28:['Libero',S(F,F,F)],
+    29:['Libero',S(F,F,F)],
+    30:['Turno da verificare',S(U,U,U)]
+  };
+
+  function fromMap(map,awayLabel){
+    return function(d){
+      if(d<=HONEY_END) return {label:awayLabel,slots:S(A,A,A)};
+      var e=map[d]; return {label:e[0],slots:e[1]};
+    };
+  }
+  function demetrio(d){
+    var w=dow(d);
+    if(w===0||w===6) return {label:'Fine settimana, libero',slots:S(F,F,F)};
+    if(w===1||w===3) return {label:'Impegnato il pomeriggio (per ora non conta)',slots:S(F,T,F)};
+    if(w===2||w===4) return {label:'Impegnato la mattina (per ora non conta)',slots:S(T,F,F)};
+    return {label:'Impegnato mattina e pomeriggio (per ora non conta)',slots:S(T,T,F)};
+  }
+
+  var PEOPLE=[
+    {name:'Anna',place:'',f:true,color:'var(--anna)',day:fromMap(annaDays,'Non disponibile')},
+    {name:'Flavio',place:'',color:'var(--flavio)',day:fromMap(flavioDays,'Non disponibile')},
+    {name:'Demetrio',place:'',color:'var(--demetrio)',day:demetrio},
+    {name:'Andrea',place:'',color:'var(--andrea)',pending:true}
+  ];
+  var ACTIVE=PEOPLE.filter(function(p){return !p.pending;});
+
+  function combine(d){
+    var res={}, why={};
+    KEYS.forEach(function(k){
+      var st=ACTIVE.map(function(p){return p.day(d).slots[k];});
+      if(st.indexOf(A)>=0) res[k]='away';
+      else if(st.indexOf(B)>=0) res[k]='no';
+      else if(st.indexOf(U)>=0){
+        res[k]='forse';
+        why[k]=ACTIVE.filter(function(p){return p.day(d).slots[k]===U;}).map(function(p){return p.name;});
+      } else res[k]='si';
+    });
+    var si=KEYS.filter(function(k){return res[k]==='si';});
+    var fo=KEYS.filter(function(k){return res[k]==='forse';});
+    var kind = res.m==='away' ? 'away' : si.length===3 ? 'tutto' : si.length ? 'parte' : fo.length ? 'forse' : 'no';
+    return {slots:res,si:si,forse:fo,why:why,kind:kind};
+  }
+
+  function joinSlots(keys){
+    if(keys.length===3) return 'tutto il giorno';
+    var n=keys.map(function(k){return SLOT_NAME[k];});
+    return n.length===2 ? n[0]+' e '+n[1] : n[0];
+  }
+  function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+  function el(tag,cls,html){var e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e;}
+
+  var DATA={}; for(var d=1; d<=NDAYS; d++) DATA[d]=combine(d);
+
+  // testata
+  var occDays=[]; for(d=HONEY_END+1; d<=NDAYS; d++){ if(DATA[d].si.length) occDays.push(d); }
+  document.getElementById('lede').textContent =
+    'Dal 1° al '+HONEY_END+' novembre Anna e Flavio non sono disponibili. Dal 18 in poi ci sono '+occDays.length+
+    ' giorni con almeno una fascia in cui Anna e Flavio sono liberi tutti e due (gli impegni di Demetrio per ora non contano). Andrea si aggiunge quando arriva il suo orario.';
+  var pp=document.getElementById('people');
+  PEOPLE.forEach(function(p){
+    var w=el('span','who'+(p.pending?' pending':''), p.name+' <small>'+(p.pending?'in arrivo':'')+'</small>');
+    pp.appendChild(w);
+  });
+
+  // griglia
+  var grid=document.getElementById('grid');
+  var lead=(dow(1)+6)%7;
+  for(var i=0;i<lead;i++){ var b=el('div','cell blank'); b.setAttribute('aria-hidden','true'); grid.appendChild(b); }
+  var HEART='<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.6 1.2 4.3 2.5h2c.7-1.3 2.2-2.5 4.3-2.5 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"/></svg>';
+  var cells={};
+  for(d=1; d<=NDAYS; d++){
+    var c=DATA[d];
+    var btn=el('button','cell '+c.kind);
+    btn.type='button'; btn.dataset.day=d; btn.setAttribute('aria-pressed','false');
+    var tag = c.kind==='away' ? 'assenti' : c.kind==='tutto' ? 'tutto il giorno' : c.si.length ? joinSlots(c.si) : c.forse.length ? 'da verificare' : '';
+    var lbl = DOW_LONG[dow(d)]+' '+d+' novembre: '+(c.kind==='away'?'non disponibili':c.si.length?'liberi tutti la '+joinSlots(c.si):c.forse.length?'da verificare':'nessuna fascia libera per tutti');
+    btn.setAttribute('aria-label',lbl);
+    var inner='<span class="num">'+d+'</span>'+(tag?'<span class="tag">'+tag+'</span>':'');
+    if(c.kind==='away') inner+='';
+    else inner+='<span class="slots">'+KEYS.map(function(k){
+      var s=c.slots[k];
+      var txt=(PEOPLE[0].day(d).slots[k]===B?'a':'')+(PEOPLE[1].day(d).slots[k]===B?'f':'');
+      return '<span class="slot '+(s==='si'?'si':s==='forse'?'forse':'')+'">'+txt+'</span>';
+    }).join('')+'</span>';
+    btn.innerHTML=inner;
+    btn.addEventListener('click',function(){select(+this.dataset.day);});
+    grid.appendChild(btn); cells[d]=btn;
+  }
+
+  // occasioni
+  var occ=document.getElementById('occ')||document.createElement('ul');
+  for(d=HONEY_END+1; d<=NDAYS; d++){
+    var c2=DATA[d];
+    if(!c2.si.length && !c2.forse.length) continue;
+    var li=el('li'); var b2=el('button'); b2.type='button'; b2.dataset.day=d;
+    var main = c2.si.length ? '<b>'+cap(joinSlots(c2.si))+'</b>' : '<span style="color:var(--ink-soft)">Nessuna fascia sicura</span>';
+    var maybe='';
+    if(c2.forse.length){
+      var whoSet={}; c2.forse.forEach(function(k){(c2.why[k]||[]).forEach(function(n){whoSet[n]=1;});});
+      var who=Object.keys(whoSet);
+      maybe='<span class="maybe">'+cap(joinSlots(c2.forse))+' da verificare'+(who.length?' (dipende da '+who.join(' e ')+')':'')+'</span>';
+    }
+    b2.innerHTML='<span class="d">'+DOW_SHORT[dow(d)]+' '+d+'</span><span class="w">'+main+maybe+'</span>';
+    b2.addEventListener('click',function(){select(+this.dataset.day);});
+    li.appendChild(b2); occ.appendChild(li);
+  }
+
+  // dettaglio
+  var detail=document.getElementById('detail');
+  var STATE_TXT={free:'libero',busy:'lavora',unknown:'da verificare',away:'non disponibile',aft:'impegnato, per ora non conta'};
+  function select(day){
+    Object.keys(cells).forEach(function(k){cells[k].setAttribute('aria-pressed', String(+k===day));});
+    var c=DATA[day];
+    var h='<h2>'+cap(DOW_LONG[dow(day)])+' '+day+' novembre</h2>';
+    ACTIVE.forEach(function(p){
+      var x=p.day(day);
+      h+='<div class="prow"><div class="top"><span class="name">'+p.name+'<small>'+p.place+'</small></span><span class="what">'+x.label+'</span></div><div class="chips">'+
+        KEYS.map(function(k){var s=x.slots[k]; var t=STATE_TXT[s]; if(s===F&&p.f) t='libera'; return '<span class="chip '+(s===F?'free':s===U?'unknown':'')+'">'+cap(SLOT_NAME[k])+': '+t+'</span>';}).join('')+'</div></div>';
+    });
+    PEOPLE.filter(function(p){return p.pending;}).forEach(function(p){
+      h+='<div class="prow pending"><div class="top"><span class="name">'+p.name+'<small>'+p.place+'</small></span><span class="what">orario in arrivo</span></div></div>';
+    });
+    var tog = c.kind==='away' ? 'Anna e Flavio non sono disponibili.' : '';
+    h+='<div class="prow together"><div class="top"><span class="name">Insieme</span></div>'+
+      (tog ? '<span class="what">'+tog+'</span>' :
+      '<div class="chips">'+KEYS.map(function(k){var s=c.slots[k]; return '<span class="chip '+(s==='si'?'si':s==='forse'?'forse':'')+'">'+cap(SLOT_NAME[k])+': '+(s==='si'?'liberi tutti':s==='forse'?'da verificare':'no')+'</span>';}).join('')+'</div>')+
+      '</div>';
+    detail.innerHTML=h;
+  }
+  select(occDays.length ? occDays[0] : HONEY_END+1);
+})();
+</script>
+
+</body>
+</html>
