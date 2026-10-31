@@ -239,10 +239,10 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
   function demetrio(d){
     var w=dow(d);
     if(w===0||w===6) return {label:'Fine settimana, libero',slots:S(F,F,F)};
-    if(d===11||d===25) return {label:'CDC 11–14 e impegnato il pomeriggio (per ora non conta)',slots:S(T,T,F)};
+    if(d===11||d===25) return {label:'Impegnato mattina e pomeriggio (per ora non conta)',slots:S(T,T,F)};
     if(w===1||w===3) return {label:'Impegnato il pomeriggio (per ora non conta)',slots:S(F,T,F)};
     if(w===2||w===4) return {label:'Impegnato la mattina (per ora non conta)',slots:S(T,F,F)};
-    return {label:'AFT 11–14 e impegnato il pomeriggio (per ora non conta)',slots:S(T,T,F)};
+    return {label:'Impegnato mattina e pomeriggio (per ora non conta)',slots:S(T,T,F)};
   }
 
   var PEOPLE=[
