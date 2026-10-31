@@ -238,11 +238,12 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
   }
   function demetrio(d){
     var w=dow(d);
+    var AM='ambulatorio 10–13', PM='ambulatorio 17–20';
     if(w===0||w===6) return {label:'Fine settimana, libero',slots:S(F,F,F)};
-    if(d===11||d===25) return {label:'',slots:S(T,T,F),txt:{m:'CDC 11–14'}};
-    if(w===1||w===3) return {label:'',slots:S(F,T,F)};
-    if(w===2||w===4) return {label:'',slots:S(T,F,F)};
-    return {label:'',slots:S(T,T,F),txt:{m:'AFT 11–14'}};
+    if(d===11||d===25) return {label:'',slots:S(T,T,F),txt:{m:'CDC 11–14',p:PM}};
+    if(w===1||w===3) return {label:'',slots:S(F,T,F),txt:{p:PM}};
+    if(w===2||w===4) return {label:'',slots:S(T,F,F),txt:{m:AM}};
+    return {label:'',slots:S(T,T,F),txt:{m:'AFT 11–14',p:PM}};
   }
 
   var PEOPLE=[
