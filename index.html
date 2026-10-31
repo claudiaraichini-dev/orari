@@ -173,7 +173,7 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
       <li><b>Notte e smonto:</b> la notte va dalle 20 alle 8, quindi chi la fa è libero di giorno ma non la sera; il giorno dopo (smonto) è libero dalle 8.</li>
       <li><b>Anna:</b> M mattina 8–14, P pomeriggio 14–20, MP mattina e pomeriggio 8–20, Nido stesso orario della mattina, PS permesso studio (congresso o corso, di solito 9–17), N notte 20–8. Le caselle vuote sono riposo.</li>
       <li><b>Flavio:</b> per lo smonto vale la stessa regola di Anna. A novembre (dal 9 al 29) non ha prenotte (20–24) né reperibilità. Lunedì 30 non c'è nello screenshot.</li>
-      <li><b>Demetrio:</b> è impegnato il pomeriggio il lunedì, il mercoledì e il venerdì, e la mattina il martedì e il giovedì. Il venerdì ha anche un impegno in tarda mattinata. Per ora questi impegni nel calendario non contano: li vedi toccando il giorno.</li>
+      <li><b>Demetrio:</b> è impegnato il pomeriggio il lunedì, il mercoledì e il venerdì, e la mattina il martedì e il giovedì. Ha anche un impegno in tarda mattinata ogni venerdì e mercoledì 11 e 25. Per ora questi impegni nel calendario non contano: li vedi toccando il giorno.</li>
       <li><b>Andrea:</b> il suo orario arriva più avanti; per ora il calendario non lo considera.</li>
     </ul>
   </section>
@@ -231,6 +231,7 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
   function demetrio(d){
     var w=dow(d);
     if(w===0||w===6) return {label:'Fine settimana, libero',slots:S(F,F,F)};
+    if(d===11||d===25) return {label:'Impegnato mattina e pomeriggio (per ora non conta)',slots:S(T,T,F)};
     if(w===1||w===3) return {label:'Impegnato il pomeriggio (per ora non conta)',slots:S(F,T,F)};
     if(w===2||w===4) return {label:'Impegnato la mattina (per ora non conta)',slots:S(T,F,F)};
     return {label:'Impegnato mattina e pomeriggio (per ora non conta)',slots:S(T,T,F)};
