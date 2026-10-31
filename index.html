@@ -239,10 +239,10 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
   function demetrio(d){
     var w=dow(d);
     if(w===0||w===6) return {label:'Fine settimana, libero',slots:S(F,F,F)};
-    if(d===11||d===25) return {label:'Impegnato mattina e pomeriggio (per ora non conta)',slots:S(T,T,F)};
-    if(w===1||w===3) return {label:'Impegnato il pomeriggio (per ora non conta)',slots:S(F,T,F)};
-    if(w===2||w===4) return {label:'Impegnato la mattina (per ora non conta)',slots:S(T,F,F)};
-    return {label:'Impegnato mattina e pomeriggio (per ora non conta)',slots:S(T,T,F)};
+    if(d===11||d===25) return {label:'',slots:S(T,T,F),txt:{m:'CDC 11–14'}};
+    if(w===1||w===3) return {label:'',slots:S(F,T,F)};
+    if(w===2||w===4) return {label:'',slots:S(T,F,F)};
+    return {label:'',slots:S(T,T,F),txt:{m:'AFT 11–14'}};
   }
 
   var PEOPLE=[
@@ -336,7 +336,7 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
 
   // dettaglio
   var detail=document.getElementById('detail');
-  var STATE_TXT={free:'libero',busy:'lavora',unknown:'da verificare',away:'non disponibile',aft:'impegnato, per ora non conta'};
+  var STATE_TXT={free:'libero',busy:'lavora',unknown:'da verificare',away:'non disponibile',aft:'ambulatorio'};
   function select(day){
     Object.keys(cells).forEach(function(k){cells[k].setAttribute('aria-pressed', String(+k===day));});
     var c=DATA[day];
@@ -344,7 +344,7 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
     ACTIVE.forEach(function(p){
       var x=p.day(day);
       h+='<div class="prow"><div class="top"><span class="name">'+p.name+'<small>'+p.place+'</small></span><span class="what">'+x.label+'</span></div><div class="chips">'+
-        KEYS.map(function(k){var s=x.slots[k]; var t=STATE_TXT[s]; if(s===F&&p.f) t='libera'; return '<span class="chip '+(s===F?'free':s===U?'unknown':'')+'">'+cap(SLOT_NAME[k])+': '+t+'</span>';}).join('')+'</div></div>';
+        KEYS.map(function(k){var s=x.slots[k]; var t=(x.txt&&x.txt[k])||STATE_TXT[s]; if(s===F&&p.f) t='libera'; return '<span class="chip '+(s===F?'free':s===U?'unknown':'')+'">'+cap(SLOT_NAME[k])+': '+t+'</span>';}).join('')+'</div></div>';
     });
     PEOPLE.filter(function(p){return p.pending;}).forEach(function(p){
       h+='<div class="prow pending"><div class="top"><span class="name">'+p.name+'<small>'+p.place+'</small></span><span class="what">orario in arrivo</span></div></div>';
