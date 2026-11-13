@@ -176,7 +176,7 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
         <span id="legnd" hidden><i class="nd"></i>orari in arrivo</span>
         <span><i class="away"></i>non disponibili</span>
       </div>
-      <p class="howto">Le tre barrette sono mattina, pomeriggio e sera. Dentro trovi una piccola a se lavora Anna, f se lavora Flavio, af se lavorano tutti e due.</p>
+      <p class="howto">Le tre barrette sono mattina, pomeriggio e sera. Dentro trovi una piccola a se lavora Anna, f se lavora Flavio, n se lavora Andrea; se lavorano in più di uno le lettere stanno insieme (af, an, fn, afn).</p>
     </section>
 
     <aside>
@@ -195,7 +195,7 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
         <table class="mini" data-month="10" aria-label="Impegni di Demetrio in tarda mattinata a novembre"><thead><tr><th scope="col">Turno</th><th scope="col">Giorni di novembre</th><th scope="col">Orario</th></tr></thead><tbody><tr><th scope="row">AFT</th><td><span class="dd">ven 6</span><span class="dd">ven 13</span><span class="dd">ven 20</span><span class="dd">ven 27</span></td><td class="t">11–14</td></tr><tr><th scope="row">CDC</th><td><span class="dd">mer 11</span><span class="dd">mer 25</span></td><td class="t">11–14</td></tr></tbody></table><table class="mini" data-month="11" hidden aria-label="Impegni di Demetrio in tarda mattinata a dicembre"><thead><tr><th scope="col">Turno</th><th scope="col">Giorni di dicembre</th><th scope="col">Orario</th></tr></thead><tbody><tr><th scope="row">AFT</th><td><span class="dd">mer 2</span><span class="dd">ven 18</span><span class="dd">mer 23</span><span class="dd">mer 30</span></td><td class="t">11–14</td></tr><tr><th scope="row">CDC</th><td class="n">in arrivo</td><td class="t">—</td></tr></tbody></table><span class="dnote" data-month="11" hidden>Martedì 8 e venerdì 25 dicembre sono festivi: niente ambulatorio.</span>
       </li>
       <li data-month="11" hidden><b>Anna e Flavio:</b> gli orari di dicembre non sono ancora arrivati; il calendario si completa appena ci sono.</li>
-      <li><b>Andrea:</b> il suo orario arriva più avanti; per ora il calendario non lo considera.</li>
+      <li><b>Andrea:</b> è in reparto dal lunedì al venerdì dalle 8 alle 14, ma di solito fino alle 18 o più: per questo conto occupati la mattina e il pomeriggio dei giorni feriali. P è la guardietta 14–20 (occupato mattina e pomeriggio); GS e GD sono le guardie di 12 ore del sabato e della domenica (8–20). Sabato, domenica e festivi senza guardia sono liberi, come i giorni con XG (indisponibilità alla guardia). La sera dopo le 20 è libero.</li>
     </ul>
   </section>
 </div>
@@ -267,11 +267,23 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
     return {label:'',slots:S(T,T,F),txt:{m:'AFT 11–14',p:PM}};
   }
 
+  function andrea(d){
+    var w=dow(d);
+    var map = MONTH===11 ? {2:'P',5:'XG',11:'P',14:'P',19:'GS',22:'P',23:'P'} : {14:'GS',17:'P',22:'GD',25:'P'};
+    if(MONTH===10 && d<13) return {label:'Orario non ricevuto',slots:S(U,U,U)};
+    var c=map[d];
+    if(c==='GS'||c==='GD') return {label:'Guardia di '+(c==='GS'?'sabato':'domenica')+' (8–20)',slots:S(B,B,F),txt:{m:'guardia 8–20',p:'guardia 8–20'}};
+    if(c==='P') return {label:'Guardietta (14–20)',slots:S(B,B,F),txt:{m:'in reparto 8–14',p:'guardietta 14–20'}};
+    var fest=(MONTH===11 && (d===8||d===25));
+    if(w===0||w===6||fest) return {label:c==='XG'?'Libero (nessuna guardia)':'Libero',slots:S(F,F,F)};
+    return {label:'In reparto',slots:S(B,B,F),txt:{m:'in reparto 8–14',p:'di solito fino alle 18 o più'}};
+  }
+
   var PEOPLE=[
     {name:'Anna',place:'',f:true,color:'var(--anna)',day:fromMap(annaDays,'Non disponibile')},
     {name:'Flavio',place:'',color:'var(--flavio)',day:fromMap(flavioDays,'Non disponibile')},
     {name:'Demetrio',place:'',color:'var(--demetrio)',day:demetrio},
-    {name:'Andrea',place:'',color:'var(--andrea)',pending:true}
+    {name:'Andrea',place:'',color:'var(--andrea)',day:andrea}
   ];
   var ACTIVE=PEOPLE.filter(function(p){return !p.pending;});
 
@@ -308,8 +320,8 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
   var occDays=[]; for(d=HONEY_END+1; d<=NDAYS; d++){ if(DATA[d].si.length) occDays.push(d); }
   document.getElementById('lede').textContent =
     'Dal 1° al '+HONEY_END+' novembre Anna e Flavio non sono disponibili. Dal 18 in poi ci sono '+occDays.length+
-    ' giorni con almeno una fascia in cui Anna e Flavio sono liberi tutti e due (gli impegni di Demetrio per ora non contano). Andrea si aggiunge quando arriva il suo orario.';
-  if(MONTH===11) document.getElementById('lede').textContent='Gli orari di dicembre di Anna e Flavio non sono ancora arrivati. Per ora trovi gli impegni di Demetrio: tocca un giorno per vederli. Il calendario si completa appena ci sono i turni.';
+    ' giorni con almeno una fascia in cui Anna, Flavio e Andrea sono liberi tutti e tre (gli impegni di Demetrio per ora non contano).';
+  if(MONTH===11) document.getElementById('lede').textContent='Gli orari di dicembre di Anna e Flavio non sono ancora arrivati. Per ora trovi gli orari di Andrea e gli impegni di Demetrio: tocca un giorno per vederli. Il calendario si completa appena ci sono i turni.';
   document.getElementById('mname').textContent=MNAME;
   document.getElementById('calsec').setAttribute('aria-label','Calendario di '+MNAME+' '+YEAR);
   var pp=document.getElementById('people'); pp.innerHTML='';
@@ -335,8 +347,8 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
     if(c.kind==='away') inner+='';
     else inner+='<span class="slots">'+KEYS.map(function(k){
       var s=c.slots[k];
-      var txt=(PEOPLE[0].day(d).slots[k]===B?'a':'')+(PEOPLE[1].day(d).slots[k]===B?'f':'');
-      return '<span class="slot '+(s==='si'?'si':s==='forse'?'forse':s==='nd'?'nd':'')+'">'+txt+'</span>';
+      var txt=(PEOPLE[0].day(d).slots[k]===B?'a':'')+(PEOPLE[1].day(d).slots[k]===B?'f':'')+(PEOPLE[3].day(d).slots[k]===B?'n':'');
+      return '<span class="slot '+(s==='si'?'si':s==='forse'?'forse':s==='nd'?'nd':'')+'">'+(s==='nd'?'':txt)+'</span>';
     }).join('')+'</span>';
     btn.innerHTML=inner;
     btn.addEventListener('click',function(){select(+this.dataset.day);});
