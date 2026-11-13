@@ -141,6 +141,16 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
 .mini .dd{display:inline-block;margin:2px 4px 2px 0;padding:1px 8px;border-radius:999px;background:var(--sky-soft);font-size:12px;font-weight:700;white-space:nowrap}
 .mini .t{font-weight:700;color:var(--ink-soft);white-space:nowrap}
 @media (prefers-reduced-motion: reduce){.cell{transition:none}.cell:hover{transform:none}}
+.months{display:flex;gap:8px;flex-wrap:wrap}
+.mbtn{appearance:none;font-family:var(--f-hand);font-weight:700;font-size:24px;line-height:1;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:var(--sketch);padding:6px 18px 7px;cursor:pointer}
+.mbtn:hover{border-color:var(--sky)}
+.mbtn:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.mbtn[aria-pressed="true"]{background:var(--sky-soft);border-color:var(--sky);box-shadow:0 0 0 2px var(--sky)}
+.slot.nd{background:transparent;border:1.5px dashed var(--line)}
+.legend i.nd{background:transparent;border:1.5px dashed var(--line)}
+.chip.nd{background:transparent;border:1.5px dashed var(--line)}
+.mini td.n{color:var(--ink-soft);font-style:italic;font-weight:600}
+.dnote{display:block;margin-top:2px;font-size:13px;color:var(--ink-soft)}
 </style>
 
 </head>
@@ -148,20 +158,22 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
 <div class="wrap">
   <header>
     <span class="eyebrow">Turni di famiglia</span>
-    <h1>Quando siamo liberi · <span class="month">novembre</span></h1>
+    <h1>Quando siamo liberi · <span class="month" id="mname">novembre</span></h1>
     <svg class="squiggle" viewBox="0 0 260 14" fill="none" aria-hidden="true"><path d="M2 8 C 22 2, 38 13, 58 7 S 96 2, 118 8 S 158 13, 180 7 S 222 2, 258 8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
     <p class="lede" id="lede"></p>
     <div class="people" id="people"></div>
   </header>
 
   <div class="main">
-    <section class="cal" aria-label="Calendario di novembre 2026">
+    <section class="cal" id="calsec" aria-label="Calendario di novembre 2026">
+      <div class="months" id="months" hidden></div>
       <div class="dow" aria-hidden="true"><span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span class="we">Sab</span><span class="we">Dom</span></div>
       <div class="grid" id="grid"></div>
       <div class="legend">
         <span><i class="si"></i>liberi tutti</span>
         <span><i class="forse"></i>da verificare</span>
         <span><i></i>qualcuno lavora</span>
+        <span id="legnd" hidden><i class="nd"></i>orari in arrivo</span>
         <span><i class="away"></i>non disponibili</span>
       </div>
       <p class="howto">Le tre barrette sono mattina, pomeriggio e sera. Dentro trovi una piccola a se lavora Anna, f se lavora Flavio, af se lavorano tutti e due.</p>
@@ -178,10 +190,11 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
       <li><b>Fasce:</b> mattina 8–14, pomeriggio 14–20, sera dopo le 20.</li>
       <li><b>Notte e smonto:</b> la notte va dalle 20 alle 8, quindi chi la fa è libero di giorno ma non la sera; il giorno dopo (smonto) è libero dalle 8.</li>
       <li><b>Anna:</b> M mattina 8–14, P pomeriggio 14–20, MP mattina e pomeriggio 8–20, Nido stesso orario della mattina, PS permesso studio (congresso o corso, di solito 9–17), N notte 20–8. Le caselle vuote sono riposo.</li>
-      <li><b>Flavio:</b> per lo smonto vale la stessa regola di Anna. A novembre (dal 9 al 29) non ha prenotte (20–24) né reperibilità. Lunedì 30 non c'è nello screenshot.</li>
+      <li><b>Flavio:</b> per lo smonto vale la stessa regola di Anna. <span data-month="10">A novembre (dal 9 al 29) non ha prenotte (20–24) né reperibilità. Lunedì 30 non c'è nello screenshot.</span></li>
       <li><b>Demetrio:</b> è impegnato il pomeriggio il lunedì, il mercoledì e il venerdì, e la mattina il martedì e il giovedì. In più ha i turni AFT e CDC del prospetto qui sotto. Per ora questi impegni nel calendario non contano: li vedi toccando il giorno.
-        <table class="mini" aria-label="Impegni di Demetrio in tarda mattinata a novembre"><thead><tr><th scope="col">Turno</th><th scope="col">Giorni di novembre</th><th scope="col">Orario</th></tr></thead><tbody><tr><th scope="row">AFT</th><td><span class="dd">ven 6</span><span class="dd">ven 13</span><span class="dd">ven 20</span><span class="dd">ven 27</span></td><td class="t">11–14</td></tr><tr><th scope="row">CDC</th><td><span class="dd">mer 11</span><span class="dd">mer 25</span></td><td class="t">11–14</td></tr></tbody></table>
+        <table class="mini" data-month="10" aria-label="Impegni di Demetrio in tarda mattinata a novembre"><thead><tr><th scope="col">Turno</th><th scope="col">Giorni di novembre</th><th scope="col">Orario</th></tr></thead><tbody><tr><th scope="row">AFT</th><td><span class="dd">ven 6</span><span class="dd">ven 13</span><span class="dd">ven 20</span><span class="dd">ven 27</span></td><td class="t">11–14</td></tr><tr><th scope="row">CDC</th><td><span class="dd">mer 11</span><span class="dd">mer 25</span></td><td class="t">11–14</td></tr></tbody></table><table class="mini" data-month="11" hidden aria-label="Impegni di Demetrio in tarda mattinata a dicembre"><thead><tr><th scope="col">Turno</th><th scope="col">Giorni di dicembre</th><th scope="col">Orario</th></tr></thead><tbody><tr><th scope="row">AFT</th><td><span class="dd">mer 2</span><span class="dd">ven 18</span><span class="dd">mer 23</span><span class="dd">mer 30</span></td><td class="t">11–14</td></tr><tr><th scope="row">CDC</th><td class="n">in arrivo</td><td class="t">—</td></tr></tbody></table><span class="dnote" data-month="11" hidden>Martedì 8 e venerdì 25 dicembre sono festivi: niente ambulatorio.</span>
       </li>
+      <li data-month="11" hidden><b>Anna e Flavio:</b> gli orari di dicembre non sono ancora arrivati; il calendario si completa appena ci sono.</li>
       <li><b>Andrea:</b> il suo orario arriva più avanti; per ora il calendario non lo considera.</li>
     </ul>
   </section>
@@ -189,12 +202,13 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
 
 <script>
 (function(){
-  var F='free', B='busy', U='unknown', A='away', T='aft';
+  var F='free', B='busy', U='unknown', A='away', T='aft', ND='nd';
   var KEYS=['m','p','s'];
   var SLOT_NAME={m:'mattina',p:'pomeriggio',s:'sera'};
   var DOW_LONG=['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
   var DOW_SHORT=['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
-  var YEAR=2026, MONTH=10, NDAYS=30, HONEY_END=17;
+  var YEAR=2026, MONTH=10, NDAYS=30, HONEY_END=17, MNAME='novembre', now=new Date();
+  var MONTHS=[{y:2026,m:10,n:30,name:'novembre',hide:new Date(2026,11,1)},{y:2026,m:11,n:31,name:'dicembre',hide:null}];
 
   function S(m,p,s){return {m:m,p:p,s:s};}
   function dow(d){return new Date(YEAR,MONTH,d).getDay();}
@@ -232,6 +246,7 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
 
   function fromMap(map,awayLabel){
     return function(d){
+      if(MONTH===11) return {label:'Orario non ancora ricevuto',slots:S(ND,ND,ND)};
       if(d<=HONEY_END) return {label:awayLabel,slots:S(A,A,A)};
       var e=map[d]; return {label:e[0],slots:e[1]};
     };
@@ -240,6 +255,12 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
     var w=dow(d);
     var AM='ambulatorio 10–13', PM='ambulatorio 17–20';
     if(w===0||w===6) return {label:'Fine settimana, libero',slots:S(F,F,F)};
+    if(MONTH===11){
+      if(d===8||d===25) return {label:'Festivo, libero',slots:S(F,F,F)};
+      var aft=(d===2||d===18||d===23||d===30);
+      if(w===1||w===3||w===5) return {label:'',slots:S(aft?T:F,T,F),txt:aft?{m:'AFT 11–14',p:PM}:{p:PM}};
+      return {label:'',slots:S(T,F,F),txt:{m:AM}};
+    }
     if(d===11||d===25) return {label:'',slots:S(T,T,F),txt:{m:'CDC 11–14',p:PM}};
     if(w===1||w===3) return {label:'',slots:S(F,T,F),txt:{p:PM}};
     if(w===2||w===4) return {label:'',slots:S(T,F,F),txt:{m:AM}};
@@ -258,7 +279,8 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
     var res={}, why={};
     KEYS.forEach(function(k){
       var st=ACTIVE.map(function(p){return p.day(d).slots[k];});
-      if(st.indexOf(A)>=0) res[k]='away';
+      if(st.indexOf(ND)>=0) res[k]='nd';
+      else if(st.indexOf(A)>=0) res[k]='away';
       else if(st.indexOf(B)>=0) res[k]='no';
       else if(st.indexOf(U)>=0){
         res[k]='forse';
@@ -267,7 +289,7 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
     });
     var si=KEYS.filter(function(k){return res[k]==='si';});
     var fo=KEYS.filter(function(k){return res[k]==='forse';});
-    var kind = res.m==='away' ? 'away' : si.length===3 ? 'tutto' : si.length ? 'parte' : fo.length ? 'forse' : 'no';
+    var kind = res.m==='nd' ? 'nd' : res.m==='away' ? 'away' : si.length===3 ? 'tutto' : si.length ? 'parte' : fo.length ? 'forse' : 'no';
     return {slots:res,si:si,forse:fo,why:why,kind:kind};
   }
 
@@ -279,6 +301,7 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
   function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
   function el(tag,cls,html){var e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e;}
 
+  function render(){
   var DATA={}; for(var d=1; d<=NDAYS; d++) DATA[d]=combine(d);
 
   // testata
@@ -286,14 +309,17 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
   document.getElementById('lede').textContent =
     'Dal 1° al '+HONEY_END+' novembre Anna e Flavio non sono disponibili. Dal 18 in poi ci sono '+occDays.length+
     ' giorni con almeno una fascia in cui Anna e Flavio sono liberi tutti e due (gli impegni di Demetrio per ora non contano). Andrea si aggiunge quando arriva il suo orario.';
-  var pp=document.getElementById('people');
+  if(MONTH===11) document.getElementById('lede').textContent='Gli orari di dicembre di Anna e Flavio non sono ancora arrivati. Per ora trovi gli impegni di Demetrio: tocca un giorno per vederli. Il calendario si completa appena ci sono i turni.';
+  document.getElementById('mname').textContent=MNAME;
+  document.getElementById('calsec').setAttribute('aria-label','Calendario di '+MNAME+' '+YEAR);
+  var pp=document.getElementById('people'); pp.innerHTML='';
   PEOPLE.forEach(function(p){
     var w=el('span','who'+(p.pending?' pending':''), p.name+' <small>'+(p.pending?'in arrivo':'')+'</small>');
     pp.appendChild(w);
   });
 
   // griglia
-  var grid=document.getElementById('grid');
+  var grid=document.getElementById('grid'); grid.innerHTML='';
   var lead=(dow(1)+6)%7;
   for(var i=0;i<lead;i++){ var b=el('div','cell blank'); b.setAttribute('aria-hidden','true'); grid.appendChild(b); }
   var HEART='<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.6 1.2 4.3 2.5h2c.7-1.3 2.2-2.5 4.3-2.5 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"/></svg>';
@@ -303,14 +329,14 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
     var btn=el('button','cell '+c.kind);
     btn.type='button'; btn.dataset.day=d; btn.setAttribute('aria-pressed','false');
     var tag = c.kind==='away' ? 'assenti' : c.kind==='tutto' ? 'tutto il giorno' : c.si.length ? joinSlots(c.si) : c.forse.length ? 'da verificare' : '';
-    var lbl = DOW_LONG[dow(d)]+' '+d+' novembre: '+(c.kind==='away'?'non disponibili':c.si.length?'liberi tutti la '+joinSlots(c.si):c.forse.length?'da verificare':'nessuna fascia libera per tutti');
+    var lbl = DOW_LONG[dow(d)]+' '+d+' '+MNAME+': '+(c.kind==='away'?'non disponibili':c.si.length?'liberi tutti la '+joinSlots(c.si):c.forse.length?'da verificare':(c.kind==='nd'?'orario non ancora ricevuto':'nessuna fascia libera per tutti'));
     btn.setAttribute('aria-label',lbl);
     var inner='<span class="num">'+d+'</span>'+(tag?'<span class="tag">'+tag+'</span>':'');
     if(c.kind==='away') inner+='';
     else inner+='<span class="slots">'+KEYS.map(function(k){
       var s=c.slots[k];
       var txt=(PEOPLE[0].day(d).slots[k]===B?'a':'')+(PEOPLE[1].day(d).slots[k]===B?'f':'');
-      return '<span class="slot '+(s==='si'?'si':s==='forse'?'forse':'')+'">'+txt+'</span>';
+      return '<span class="slot '+(s==='si'?'si':s==='forse'?'forse':s==='nd'?'nd':'')+'">'+txt+'</span>';
     }).join('')+'</span>';
     btn.innerHTML=inner;
     btn.addEventListener('click',function(){select(+this.dataset.day);});
@@ -337,27 +363,47 @@ h2{font-family:var(--f-hand);font-weight:700;font-size:32px;line-height:1.05;mar
 
   // dettaglio
   var detail=document.getElementById('detail');
-  var STATE_TXT={free:'libero',busy:'lavora',unknown:'da verificare',away:'non disponibile',aft:'ambulatorio'};
+  var STATE_TXT={free:'libero',busy:'lavora',unknown:'da verificare',away:'non disponibile',aft:'ambulatorio',nd:'in arrivo'};
   function select(day){
     Object.keys(cells).forEach(function(k){cells[k].setAttribute('aria-pressed', String(+k===day));});
     var c=DATA[day];
-    var h='<h2>'+cap(DOW_LONG[dow(day)])+' '+day+' novembre</h2>';
+    var h='<h2>'+cap(DOW_LONG[dow(day)])+' '+day+' '+MNAME+'</h2>';
     ACTIVE.forEach(function(p){
       var x=p.day(day);
       h+='<div class="prow"><div class="top"><span class="name">'+p.name+'<small>'+p.place+'</small></span><span class="what">'+x.label+'</span></div><div class="chips">'+
-        KEYS.map(function(k){var s=x.slots[k]; var t=(x.txt&&x.txt[k])||STATE_TXT[s]; if(s===F&&p.f) t='libera'; return '<span class="chip '+(s===F?'free':s===U?'unknown':'')+'">'+cap(SLOT_NAME[k])+': '+t+'</span>';}).join('')+'</div></div>';
+        KEYS.map(function(k){var s=x.slots[k]; var t=(x.txt&&x.txt[k])||STATE_TXT[s]; if(s===F&&p.f) t='libera'; return '<span class="chip '+(s===F?'free':s===U?'unknown':s===ND?'nd':'')+'">'+cap(SLOT_NAME[k])+': '+t+'</span>';}).join('')+'</div></div>';
     });
     PEOPLE.filter(function(p){return p.pending;}).forEach(function(p){
       h+='<div class="prow pending"><div class="top"><span class="name">'+p.name+'<small>'+p.place+'</small></span><span class="what">orario in arrivo</span></div></div>';
     });
     var tog = c.kind==='away' ? 'Anna e Flavio non sono disponibili.' : '';
     h+='<div class="prow together"><div class="top"><span class="name">Insieme</span></div>'+
-      (tog ? '<span class="what">'+tog+'</span>' :
+      (c.kind==='nd' ? '<span class="what">Gli orari di Anna e Flavio sono in arrivo.</span>' : tog ? '<span class="what">'+tog+'</span>' :
       '<div class="chips">'+KEYS.map(function(k){var s=c.slots[k]; return '<span class="chip '+(s==='si'?'si':s==='forse'?'forse':'')+'">'+cap(SLOT_NAME[k])+': '+(s==='si'?'liberi tutti':s==='forse'?'da verificare':'no')+'</span>';}).join('')+'</div>')+
       '</div>';
     detail.innerHTML=h;
   }
-  select(occDays.length ? occDays[0] : HONEY_END+1);
+  select(MONTH===11 ? (now.getMonth()===11 ? now.getDate() : 1) : (occDays.length ? occDays[0] : HONEY_END+1));
+  }
+
+  var VIS=MONTHS.filter(function(x){return !x.hide||now<x.hide;});
+  var mbox=document.getElementById('months'), tabs=[];
+  function show(i){
+    var x=VIS[i]; YEAR=x.y; MONTH=x.m; NDAYS=x.n; MNAME=x.name;
+    render();
+    tabs.forEach(function(b,j){b.setAttribute('aria-pressed',String(j===i));});
+    Array.prototype.forEach.call(document.querySelectorAll('[data-month]'),function(n){n.hidden=(+n.getAttribute('data-month')!==MONTH);});
+    document.getElementById('legnd').hidden=(MONTH!==11);
+  }
+  var start=0; VIS.forEach(function(x,j){ if(new Date(x.y,x.m,1)<=now) start=j; });
+  if(VIS.length>1){
+    mbox.hidden=false;
+    VIS.forEach(function(x,j){
+      var b=el('button','mbtn',cap(x.name)); b.type='button'; b.setAttribute('aria-pressed','false');
+      b.addEventListener('click',function(){show(j);}); mbox.appendChild(b); tabs.push(b);
+    });
+  }
+  show(start);
 })();
 </script>
 
